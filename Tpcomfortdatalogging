@@ -1,0 +1,56 @@
+Sub logging()
+'authorized by Mr.supakorn vipajiroj Nov'3,23
+'ADIM 1 
+Dim fileName, folderName, fileLocation
+fileName = Year(Now()) & "_" & Month(Now()) & "_" & Day(Now()) & ".csv"
+folderName = "\Storage Card USB\weightcard2Logs\"
+fileLocation = folderName & fileName
+
+'ADIM2                              
+Dim fso
+                Set fso = CreateObject("FileCtl.FileSystem")
+               
+                If (fso.Dir(folderName)) = "" Then
+                                fso.MkDir folderName
+                End If
+                                 
+                If Err.Number <> 0 Then
+                                ShowSystemAlarm "Error # " & CStr(Err.Number)& " " & Err.Description
+                                Err.Clear
+                End If
+'ADIM3
+Dim fctl
+                Set fctl = CreateObject("FileCtl.File")
+
+
+                fctl.Open fileLocation, 8
+                 
+                If Err.Number <> 0 Then
+                                ShowSystemAlarm "Error # " & CStr(Err.Number)& " " & Err.Description
+                                Err.Clear
+                End If
+'ADIM4
+Dim currentPosition, nextPosition
+currentPosition = fctl.Loc
+                nextPosition = fctl.Seek
+                 
+
+                If currentPosition = 1 And nextPosition = 1 Then
+                                fctl.LinePrint "Time, DataPoint1, DataPoint2, DataPoint3, DataPoint4, DataPoint5"
+                End If
+'ADIM5
+Dim currentTime,dataValues
+currentTime = Hour(Time) & ":" & Minute(Time) & ":" & Second(Time)
+
+                dataValues = currentTime &", "& _
+                                SmartTags("DataPoint1") & ", " & _
+                                SmartTags("DataPoint2") & ", " & _
+                                SmartTags("DataPoint3") & ", " & _
+                                SmartTags("DataPoint4") & ", " & _
+                                SmartTags("DataPoint5")
+ 
+fctl.LinePrint dataValues
+                fctl.Close
+
+
+End Sub
